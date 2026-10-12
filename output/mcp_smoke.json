@@ -1,0 +1,76 @@
+{
+  "server": "campus-customs",
+  "database": "data/campus_customs_new.db",
+  "tests": [
+    {
+      "prompt_asked_to_vibe_coder": "Use the campus-customs MCP server and call exactly these tools: check_order_stock with ticket_id 101, check_rent_due with ticket_id 102, and evaluate_bulk_discount with ticket_id 103. Do not call any other tool. Do not change any database records. Return each tool result as JSON exactly as received, with its tool name and input.",
+      "tool_name": "check_order_stock",
+      "input": {
+        "ticket_id": 101
+      },
+      "tool_output": {
+        "ticket_id": 101,
+        "ticket_status": "open",
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "requested_qty": 1,
+        "available_qty": 0,
+        "can_fulfill": false,
+        "stock_shortfall": 1,
+        "inventory_item": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        }
+      }
+    },
+    {
+      "prompt_asked_to_vibe_coder": "Use the campus-customs MCP server and call exactly these tools: check_order_stock with ticket_id 101, check_rent_due with ticket_id 102, and evaluate_bulk_discount with ticket_id 103. Do not call any other tool. Do not change any database records. Return each tool result as JSON exactly as received, with its tool name and input.",
+      "tool_name": "check_rent_due",
+      "input": {
+        "ticket_id": 102
+      },
+      "tool_output": {
+        "ticket_id": 102,
+        "ticket_status": "open",
+        "lease_id": 1,
+        "space_name": "Chapel Street shop",
+        "landlord": "Elm City Properties",
+        "monthly_rent": 2400.0,
+        "next_due": "2026-09-02",
+        "shop_date": "2026-08-31",
+        "days_until_due": 2,
+        "due_state": "upcoming"
+      }
+    },
+    {
+      "prompt_asked_to_vibe_coder": "Use the campus-customs MCP server and call exactly these tools: check_order_stock with ticket_id 101, check_rent_due with ticket_id 102, and evaluate_bulk_discount with ticket_id 103. Do not call any other tool. Do not change any database records. Return each tool result as JSON exactly as received, with its tool name and input.",
+      "tool_name": "evaluate_bulk_discount",
+      "input": {
+        "ticket_id": 103
+      },
+      "tool_output": {
+        "ticket_id": 103,
+        "ticket_status": "open",
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "requested_qty": 20,
+        "available_qty": 8,
+        "stock_shortfall": 12,
+        "unit_cost_from_pricing": 22.0,
+        "list_price_from_pricing": 58.0,
+        "unit_margin_at_list_price": 36.0,
+        "list_price_total": 1160.0,
+        "cost_total": 440.0,
+        "gross_margin_total_at_list_price": 720.0,
+        "discount_policy": "No discount rule is stored in the database; no discount is recommended or approved by this tool."
+      }
+    }
+  ],
+  "verification": {
+    "database_values_checked_read_only": true,
+    "database_records_changed": false
+  }
+}

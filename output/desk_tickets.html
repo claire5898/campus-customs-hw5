@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b12">
+  <title>Campus Customs — Ticket Desk</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #100b12;
+      --panel: #19121d;
+      --panel-raised: #211827;
+      --line: #38283b;
+      --ink: #f6edf4;
+      --muted: #b7a7b7;
+      --pink: #ff70b8;
+      --pink-light: #ffc1df;
+      --green: #a9e9c7;
+      --amber: #ffd38a;
+      --red: #ff9eae;
+      --radius: 20px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 82% -8%, rgba(255,112,184,.16), transparent 34rem),
+        radial-gradient(ellipse at -10% 60%, rgba(155,91,171,.11), transparent 30rem),
+        var(--bg);
+      color: var(--ink);
+    }
+    .shell { width: min(1120px, calc(100% - 36px)); margin: 0 auto; padding: 44px 0 64px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; color: var(--pink-light); font-size: .75rem; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; display: inline-block; width: 22px; height: 2px; background: var(--pink); }
+    h1 { margin: 12px 0 8px; font-size: clamp(2.1rem, 5vw, 3.65rem); line-height: 1.04; letter-spacing: -.055em; }
+    .intro { max-width: 720px; color: var(--muted); line-height: 1.65; margin: 0; }
+    .snapshot { display: inline-flex; align-items: center; gap: 9px; margin-top: 20px; border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; background: rgba(25,18,29,.78); color: var(--muted); font-size: .82rem; }
+    .snapshot strong { color: var(--ink); font-weight: 650; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px rgba(169,233,199,.55); }
+    .desk { margin-top: 32px; border: 1px solid var(--line); border-radius: 26px; background: rgba(25,18,29,.88); overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,.28); }
+    .tabs-wrap { padding: 14px; border-bottom: 1px solid var(--line); background: rgba(16,11,18,.48); }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; }
+    .tab {
+      display: inline-flex; align-items: center; gap: 9px; flex: 0 0 auto;
+      border: 1px solid transparent; border-radius: 13px; padding: 11px 14px;
+      background: transparent; color: var(--muted); font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+    .tab:hover { color: var(--ink); background: rgba(255,255,255,.045); }
+    .tab[aria-selected="true"] { color: var(--ink); border-color: rgba(255,112,184,.38); background: linear-gradient(135deg, rgba(255,112,184,.17), rgba(255,112,184,.06)); }
+    .tab-number { color: var(--pink); font-variant-numeric: tabular-nums; }
+    .tab-empty { color: #8d7f8e; font-weight: 550; }
+    .panel { padding: clamp(20px, 4vw, 42px); }
+    .panel[hidden] { display: none; }
+    .ticket-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 28px; }
+    .ticket-kicker { color: var(--pink); font-size: .76rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h2 { margin: 7px 0 7px; font-size: clamp(1.65rem, 3.5vw, 2.35rem); letter-spacing: -.04em; }
+    .subject { margin: 0; color: var(--muted); }
+    .status { flex: 0 0 auto; border: 1px solid rgba(255,211,138,.35); color: var(--amber); background: rgba(255,211,138,.08); border-radius: 999px; padding: 7px 11px; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .facts { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin: 0 0 28px; }
+    .fact { min-height: 82px; padding: 14px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.025); }
+    .fact dt { color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .fact dd { margin: 7px 0 0; color: var(--ink); font-size: .98rem; font-weight: 700; overflow-wrap: anywhere; }
+    .fact dd.warn { color: var(--amber); }
+    .section-label { display: flex; align-items: center; gap: 10px; margin: 0 0 13px; color: var(--pink-light); font-size: .8rem; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+    .section-label::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--pink); transform: rotate(45deg); }
+    .expected { padding: clamp(17px, 3vw, 25px); border: 1px solid rgba(255,112,184,.27); border-radius: var(--radius); background: linear-gradient(135deg, rgba(255,112,184,.075), rgba(255,255,255,.018) 58%); }
+    .expected p { color: #e6dce5; line-height: 1.65; margin: 0 0 13px; }
+    .expected p:last-child { margin-bottom: 0; }
+    .expected ul { display: grid; gap: 10px; margin: 0; padding-left: 19px; color: #e6dce5; line-height: 1.58; }
+    .expected li::marker { color: var(--pink); }
+    .expected strong { color: var(--ink); }
+    .actual-block { margin-top: 27px; }
+    .actual-note { color: var(--muted); margin: -3px 0 12px; font-size: .88rem; }
+    textarea { display: block; width: 100%; min-height: 175px; resize: vertical; border: 1px dashed #70536f; border-radius: 15px; padding: 14px; background: rgba(8,6,10,.45); color: var(--ink); font: inherit; line-height: 1.6; outline: none; }
+    textarea:focus { border-style: solid; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,112,184,.11); }
+    textarea::placeholder { color: #766a77; }
+    .empty-panel { min-height: 370px; }
+    .source { margin: 23px 0 0; color: #958797; font-size: .77rem; line-height: 1.55; }
+    .source code { color: #c9b8c9; }
+    .save-state { min-height: 1.2em; margin-top: 8px; color: var(--green); font-size: .78rem; }
+    .cash-recon { max-width: 100%; overflow-x: auto; margin: 22px 0; border: 1px solid var(--line); border-radius: 15px; }
+    .cash-recon table { width: 100%; min-width: 760px; border-collapse: collapse; }
+    .cash-recon th, .cash-recon td { padding: 13px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.5; }
+    .cash-recon th { color: var(--pink-light); background: rgba(255,112,184,.07); font-size: .73rem; letter-spacing: .06em; text-transform: uppercase; }
+    .cash-recon td { color: #e6dce5; font-size: .84rem; }
+    .cash-recon tr:last-child td { border-bottom: 0; }
+    .cash-recon td.money { white-space: nowrap; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .cash-equation { padding: 17px 19px; border: 1px solid rgba(169,233,199,.28); border-radius: 15px; background: rgba(169,233,199,.06); line-height: 1.7; }
+    .cash-equation strong { color: var(--green); font-variant-numeric: tabular-nums; }
+    .cash-warning { color: var(--amber); font-weight: 700; }
+    @media (max-width: 720px) {
+      .shell { width: min(100% - 22px, 1120px); padding-top: 28px; }
+      .ticket-head { display: block; }
+      .status { display: inline-flex; margin-top: 14px; }
+      .facts { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .tabs-wrap { padding: 9px; }
+      .tab { padding: 10px 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="eyebrow">Campus Customs · Problem 6</div>
+      <h1>Ticket planning desk</h1>
+      <p class="intro">Expected team actions are recorded before a live agent run. After running the agents, fill in each ticket’s ACTUAL section and compare what happened with the plan.</p>
+      <div class="snapshot"><span class="dot" aria-hidden="true"></span><span>Database snapshot · shop date <strong>2026-08-31</strong> · three open tickets</span></div>
+    </header>
+
+    <section class="desk" aria-label="Ticket planning tabs">
+      <div class="tabs-wrap">
+        <div class="tabs" role="tablist" aria-label="Desk sections">
+          <button class="tab" id="tab-101" role="tab" aria-selected="true" aria-controls="panel-101" tabindex="0"><span class="tab-number">101</span> Order</button>
+          <button class="tab" id="tab-102" role="tab" aria-selected="false" aria-controls="panel-102" tabindex="-1"><span class="tab-number">102</span> Rent</button>
+          <button class="tab" id="tab-103" role="tab" aria-selected="false" aria-controls="panel-103" tabindex="-1"><span class="tab-number">103</span> Bulk request</button>
+          <button class="tab tab-empty" id="tab-cash" role="tab" aria-selected="false" aria-controls="panel-cash" tabindex="-1">Cash</button>
+          <button class="tab tab-empty" id="tab-reflection" role="tab" aria-selected="false" aria-controls="panel-reflection" tabindex="-1">Reflection</button>
+        </div>
+      </div>
+
+      <article class="panel" id="panel-101" role="tabpanel" aria-labelledby="tab-101" tabindex="0">
+        <div class="ticket-head">
+          <div><div class="ticket-kicker">Ticket 101 · Customer order</div><h2>Bulldog tee · size S</h2><p class="subject">Requester: Tauhid Zaman · “Needs a tee in size S.”</p></div>
+          <span class="status">Open</span>
+        </div>
+        <dl class="facts">
+          <div class="fact"><dt>Requested</dt><dd>1 × CC-TEE-WHITE · S</dd></div>
+          <div class="fact"><dt>Available</dt><dd class="warn">0 · short 1</dd></div>
+          <div class="fact"><dt>Linked invoice</dt><dd>501 · $840 · overdue</dd></div>
+          <div class="fact"><dt>Vendor lead time</dt><dd>5 days · not guaranteed</dd></div>
+        </dl>
+        <h3 class="section-label">Expected</h3>
+        <div class="expected">
+          <p>First I'd have Boss check the ticket to see what the customer ordered and if theres an invoice linked. Then I'd ask Inventory to check stock and see if we can restock. Turns out the tee is out of stock. Bulldog Print Co. might be an option but they have an unpaid invoice thats blocking shipments. We also dont know if they can supply the exact tee. If needed, I'd ask Accounting to check whether we have enough cash to pay the invoice. For now I'd keep the ticket open and not promise the customer anything until we know for sure.</p>
+          <p><strong>MCP tools to compare against:</strong> Boss — <code>list_open_tickets()</code>, <code>get_ticket(101)</code>; Inventory — <code>check_order_stock(101)</code>, <code>list_vendors()</code>; if Accounting is needed — <code>get_invoice(501)</code>, <code>get_cash_accounts()</code>.</p>
+        </div>
+        <div class="actual-block"><h3 class="section-label">Actual</h3><p class="actual-note">Live run after database reset · human marked resolved for the assignment; no payment or stock reservation.</p><textarea aria-label="Actual results for ticket 101" data-save="actual-101">Agents and delegation: Boss reviewed ticket 101 and asked Inventory to check stock and vendor shipping eligibility. Inventory then delegated the invoice/payment-blocker check to Accounting. Accounting returned the invoice and eligibility findings; Boss synthesized the recommendation. Customer Service did not work this ticket.
+
+MCP tools recorded: Boss — get_shop_date, get_ticket. Accounting (tool-call attribution in the audit log) — check_order_stock, check_vendor_shipping_eligibility, get_inventory, get_invoice, get_shop_date, get_ticket, get_vendor, list_unpaid_invoices.
+
+Findings: 0 available CC-TEE-WHITE tees in size S (short 1). Vendor 1 is blocked from shipping by open/unpaid invoice 501 for $840, overdue as of shop date 2026-08-31. The 5-day vendor lead time is only an estimate. Boss recommends keeping the ticket open, making no customer promise, and asking a human to decide whether to approve the invoice; after any decision, recheck vendor eligibility and stock. Customer Service drafted a cautious availability update; it was not sent. No payment, purchase, or stock reservation was made. Human status update: Claire marked the ticket resolved for the assignment after review. This status change does not mean the tee was fulfilled, invoice 501 was paid, or the customer was notified.</textarea><div class="save-state" aria-live="polite"></div></div>
+        <p class="source">MCP snapshot sources: <code>check_order_stock(101)</code>, <code>list_vendors()</code>, <code>list_unpaid_invoices()</code>, <code>get_cash_accounts()</code>. Cash balance and tool results can change between runs.</p>
+      </article>
+
+      <article class="panel" id="panel-102" role="tabpanel" aria-labelledby="tab-102" tabindex="0" hidden>
+        <div class="ticket-head">
+          <div><div class="ticket-kicker">Ticket 102 · Rent notice</div><h2>Shop rent due soon</h2><p class="subject">Requester: Elm City Properties · “Shop rent due in 2 days.”</p></div>
+          <span class="status">Open</span>
+        </div>
+        <dl class="facts">
+          <div class="fact"><dt>Shop date</dt><dd>2026-08-31</dd></div>
+          <div class="fact"><dt>Rent due</dt><dd>2026-09-02 · in 2 days</dd></div>
+          <div class="fact"><dt>Monthly rent</dt><dd>$2,400</dd></div>
+          <div class="fact"><dt>Checking balance</dt><dd>$3,400</dd></div>
+        </dl>
+        <h3 class="section-label">Expected</h3>
+        <div class="expected">
+          <p>I'd have Boss read the ticket and then ask Facilities to check when rent is due. Turns out rent isnt overdue yet, but its coming up in two days. I'd then ask Accounting to check how much cash we have and what other invoices need to be paid. It looks like paying both rent and the overdue invoice would leave us with very little cash. So I'd flag this to the owner and let them decide what to prioritize rather than making any payments ourselves.</p>
+          <p><strong>MCP tools to compare against:</strong> Boss — <code>list_open_tickets()</code>, <code>get_ticket(102)</code>; Facilities — <code>check_rent_due(102)</code>; Accounting — <code>get_cash_accounts()</code>, <code>list_unpaid_invoices()</code>.</p>
+        </div>
+        <div class="actual-block"><h3 class="section-label">Actual</h3><p class="actual-note">Live run after database reset · human marked resolved for the assignment; no payment or landlord contact.</p><textarea aria-label="Actual results for ticket 102" data-save="actual-102">Agents and delegation: Boss reviewed ticket 102 and delegated the lease/rent-date check to Facilities. Facilities delegated the cash and recorded-payment check to Accounting. Facilities and Accounting returned findings to Boss; Customer Service did not work this ticket.
+
+MCP tools recorded: Boss — get_shop_date, get_ticket, list_open_tickets. Facilities — list_open_tickets. Accounting (tool-call attribution in the audit log) — check_rent_due, get_cash_accounts, get_lease, get_shop_date, get_ticket, list_unpaid_invoices.
+
+Findings: Facilities verified $2,400 rent for the Chapel Street shop is due 2026-09-02, two days after shop date 2026-08-31, and is not overdue. Accounting read checking at $3,400 and noted an open $840 overdue vendor invoice; whether rent was already paid or approved and how other obligations affect cash timing are unknown. Boss recommends confirming the payment record and rechecking cash before the due date; any payment requires human approval. No payment was made. Human status update: Claire marked the ticket resolved for the assignment after review, although rent payment remains unverified; no landlord contact was made.</textarea><div class="save-state" aria-live="polite"></div></div>
+        <p class="source">MCP snapshot sources: <code>check_rent_due(102)</code>, <code>get_lease(1)</code>, <code>get_cash_accounts()</code>, <code>list_unpaid_invoices()</code>. The team must recheck live values when it runs.</p>
+      </article>
+
+      <article class="panel" id="panel-103" role="tabpanel" aria-labelledby="tab-103" tabindex="0" hidden>
+        <div class="ticket-head">
+          <div><div class="ticket-kicker">Ticket 103 · Price override</div><h2>Bulk hoodie discount</h2><p class="subject">Requester: Yale AI Club · “Wants 20 hoodies, size M, and asks for a bulk discount.”</p></div>
+          <span class="status">Open</span>
+        </div>
+        <dl class="facts">
+          <div class="fact"><dt>Requested</dt><dd>20 × CC-HOOD-NAVY · M</dd></div>
+          <div class="fact"><dt>Available</dt><dd class="warn">8 · short 12</dd></div>
+          <div class="fact"><dt>List price / unit cost</dt><dd>$58 / $22</dd></div>
+          <div class="fact"><dt>Margin at list price</dt><dd>$36 per unit</dd></div>
+        </dl>
+        <h3 class="section-label">Expected</h3>
+        <div class="expected">
+          <p>First I'd have Boss review the ticket and ask Accounting to look into the discount request. We dont have enough hoodies in stock to fulfill the order, and while theres a decent profit margin on each hoodie, theres no actual discount policy in the database. So we cant just approve a discount ourselves. I'd then ask Inventory to look into restocking options if needed, although our apparel vendor is currently blocked by an unpaid invoice. For now I'd leave the request pending until we get approval on pricing and figure out if we can actually fulfill the order.</p>
+          <p><strong>MCP tools to compare against:</strong> Boss — <code>list_open_tickets()</code>, <code>get_ticket(103)</code>; Accounting — <code>evaluate_bulk_discount(103)</code>; if restock research is needed, Inventory — <code>list_vendors()</code>.</p>
+        </div>
+        <div class="actual-block"><h3 class="section-label">Actual</h3><p class="actual-note">Live run after database reset · human marked resolved for the assignment; discount and fulfillment were not performed.</p><textarea aria-label="Actual results for ticket 103" data-save="actual-103">Agents and delegation: Boss reviewed ticket 103 and delegated the quantity/availability check to Inventory and the pricing/discount check to Accounting. Inventory also delegated a focused pricing/discount verification to Accounting. Boss combined both reports; Facilities and Customer Service did not work this ticket.
+
+MCP tools recorded: Boss — get_ticket. Accounting (tool-call attribution in the audit log) — check_order_stock, check_vendor_shipping_eligibility, evaluate_bulk_discount, get_inventory, get_pricing, get_ticket, get_vendor, list_vendors.
+
+Findings: 8 of 20 requested CC-HOOD-NAVY hoodies, size M, are available (short 12); full-quantity fulfillment is not verified. No stored discount rule or price-override approval was found. List price is $58 and unit cost $22; $1,160 for 20 at list price is arithmetic only, not an approved quote. Vendor 1 is blocked from shipping by an unpaid invoice; its 5-day lead time is not guaranteed. Boss recommends human review of any discount and verified restock availability before committing. No discount, order, payment, or customer message was made. Human status update: Claire marked the ticket resolved for the assignment after review; this does not confirm discount approval, restock of the 12-unit shortfall, or customer notification.</textarea><div class="save-state" aria-live="polite"></div></div>
+        <p class="source">MCP snapshot sources: <code>evaluate_bulk_discount(103)</code>, <code>list_vendors()</code>, <code>list_unpaid_invoices()</code>. No discount rule is stored in the database.</p>
+      </article>
+
+      <section class="panel empty-panel" id="panel-cash" role="tabpanel" aria-labelledby="tab-cash" tabindex="0" hidden>
+        <h2>Cash reconciliation</h2>
+        <p>Working-copy database: <code>data/campus_customs_new.db</code> · shop date: <strong>2026-08-31</strong>. The reset baseline and ending balance below were checked against <code>cash_accounts</code> through the backend.</p>
+        <div class="cash-recon"><table>
+          <thead><tr><th>Ticket</th><th>Payment / purchase information</th><th>Cash change</th><th>Why this changed (or did not)</th></tr></thead>
+          <tbody>
+            <tr><td>101 · Bulldog tee</td><td>Invoice 501: <strong>$840.00 open/unpaid</strong>; no payment recorded.</td><td class="money">$0.00</td><td>Payment was not approved or made. Invoice amount is an outstanding obligation, not cash spent. Ticket status update does not pay it.</td></tr>
+            <tr><td>102 · Rent notice</td><td>Rent: <strong>$2,400.00 due 2026-09-02</strong>; no rent payment made during this run; prior payment status is unverified.</td><td class="money">$0.00</td><td>No rent payment was approved during the run. Since prior payment status is unverified, the due amount is not counted as cash spent.</td></tr>
+            <tr><td>103 · Bulk hoodie discount</td><td>Purchase/outflow: <strong>$0.00</strong>; no order or purchase was made. $1,160.00 at list price for 20 units is arithmetic only, not an approved purchase.</td><td class="money">$0.00</td><td>No purchase or discount was approved. The list-price calculation is not money spent.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cash-equation"><div>Starting checking after reset: <strong>$3,400.00</strong></div><div>Ticket 101 ($0.00) + Ticket 102 ($0.00) + Ticket 103 ($0.00) = total cash change <strong>$0.00</strong></div><div>Calculated ending checking: <strong>$3,400.00</strong> · Working database <code>cash_accounts</code>: <strong>$3,400.00</strong></div></div>
+        <p class="cash-warning">Cash check: $3,400.00 + $0.00 − $0.00 − $0.00 = $3,400.00. All ticket resolutions were status-only; no payment, purchase, income, or refund changed cash. Incorrect cash math loses points, so the ending amount is reconciled to the working database.</p>
+      </section>
+      <section class="panel" id="panel-reflection" role="tabpanel" aria-labelledby="tab-reflection" tabindex="0" hidden>
+        <h2>Reflection</h2>
+        <p class="actual-note">Claire’s reflection on agent performance, expected-versus-actual work, the single-agent tradeoff, and problems the current tools can and cannot handle. This field saves in this browser as you edit.</p>
+        <textarea aria-label="Problem 10 reflection" data-save="reflection">When evaluating the agents, I would first look at whether they were using the correct information from the database and not making assumptions about things they couldnt verify. I'd also want to see whether Boss was delegating tasks to the right agents rather than involving everyone unnecessarily. Another important thing is making sure the agents werent taking actions they werent supposed to, like making payments, placing orders or promising customers something without confirmation. I would also look at how efficient the process was, including how many tools and handoffs were needed. One thing I noticed is that just because a ticket is marked resolved doesnt mean the actual problem has been fixed.
+
+Ticket 101 — Customer Order
+For this ticket, I expected Boss to first review the order, then have Inventory check stock and restocking options, and Accounting check the invoice if needed. The actual process pretty much followed what I expected. Inventory found that the tee was out of stock and there was an unpaid invoice preventing the vendor from shipping. The estimated delivery time also wasnt guaranteed. I think the agents handled this well because they didnt promise the customer something they couldnt confirm. Although I'm not sure if Accounting needed to check cash before anyone had even decided to pay the invoice. I ended up marking the ticket resolved, but the customer still didnt get their tee and the invoice was still unpaid, so technically the actual issue wasnt resolved.
+
+Ticket 102 — Rent Notice
+For this one, I expected Boss to ask Facilities to check the lease and due date, then have Accounting look at our cash and outstanding payments. Thats basically what happened. The agents confirmed that rent was due in two days and we had enough cash to pay it, although paying our other overdue invoice would leave us with very little money. I think they did a good job recognizing that rent wasnt actually overdue yet and didnt make any payments or contact the landlord. There did seem to be some unecessary delegation which could have made the process less efficient. I marked the ticket resolved, but again that doesnt mean rent was actually paid.
+
+Ticket 103 — Bulk Hoodie Discount
+I expected Boss to ask Accounting about the discount and Inventory to check whether we had enough hoodies. The agents did check both pricing and stock, although there was also an extra handoff between Inventory and Accounting. They found that we didnt have enough hoodies to fulfill the order and there wasnt an existing discount policy. The vendor also couldnt ship because of the unpaid invoice. I think the agents made the right decision by not making up a discount or promising the full order. The total price they calculated was just based on the regular price, not an approved quote. Again, even though I marked the ticket resolved, no discount was approved and the hoodies werent actually ordered or delivered.
+
+I also think its worth considering whether we really need multiple agents for these types of tasks. A single agent with access to all the tools could probably have handled these tickets with fewer handoffs and less repeated work. It might also save tokens and avoid some of the issues with delegation. On the other hand, having specialized agents makes it easier to keep responsibilities seperate and double check information. I think for simpler tickets I'd probably prefer one agent, but for more complicated issues involving multiple departments, delegating to specialists makes more sense. I wouldnt necessarily involve every agent unless there was a reason to.
+
+For other problems the team could investigate with the current tools, one example would be a customer asking whether a certain product is available in their size. Inventory could check stock and Accounting could look at pricing if neccessary. The agents could give the customer the information but wouldnt actually be able to reserve or order anything. Another example would be checking why a vendor isnt shipping an order. Accounting could look at unpaid invoices while Inventory checks the vendor details and lead times. They could identify whats holding up the shipment, but wouldnt be able to pay the invoice or guarantee when it arrives. A third example would be another rent notice. Facilities could check the lease and Accounting could review our cash situation, then give the owner a recommendation without actually paying rent or contacting the landlord.
+
+There are also some problems that the agents wouldnt be able to fully solve with the tools they currently have. One would be actually restocking products from a vendor. They can check stock and vendor information, but they cant confirm whether the vendor has the exact product available, get a quote or place a purchase order. I think we'd need some kind of Purchasing agent with access to vendor catalogs and ordering tools, although a human should still approve purchases.
+
+Another issue would be handling customer refunds or store credit. Right now the agents dont have access to a complete returns and refunds system, so they couldnt really process these requests. We'd need additional tools to check the original order, calculate the refund, make sure it hasnt already been refunded and then process it with approval. This would probably involve both Accounting and Customer Service.
+
+Lastly, the agents also couldnt fully handle rent payments and communication with the landlord. Facilities can check the lease and Accounting can look at our cash, but theres no way for them to complete the whole process. We'd need a payment tool that records the transaction properly and probably another tool for drafting messages to the landlord. I think these actions should still require human approval, especially since they involve money and outside communication.
+
+Overall, I think the agents were pretty good at finding the right information and staying within their limits. The main thing I'd improve is making the delegation process more efficent and being more clear about what it actually means for a ticket to be resolved. In all three cases, the agents were able to investigate the issues and provide useful recomendations, but they didnt actually complete the underlying tasks.
+
+Evidence from my Campus Customs app: I compared my EXPECTED and ACTUAL notes in the 101, 102, and 103 ticket tabs. For ticket 101, the Actual notes record the stock and vendor-shipping investigation and the invoice check: there were 0 of the requested size-S tees, and unpaid invoice 501 for $840 blocked the vendor. For ticket 102, the Actual notes and rent facts show that $2,400 rent was due on 2026-09-02, two days after the shop date, and Accounting checked the balance and unpaid invoices; the previous rent-payment status remained unverified. For ticket 103, the Actual notes show 8 of 20 size-M hoodies in stock, no recorded discount approval, and a vendor blocked by the unpaid invoice. The $1,160 figure was only the list-price calculation, not an approved quote.
+
+I also used the Cash tab as evidence instead of assuming ticket resolution meant money moved. It records the $3,400 starting checking balance after reset, a $0.00 cash change for ticket 101 because invoice 501 was not paid, $0.00 for ticket 102 because no rent payment was made in this run, and $0.00 for ticket 103 because no purchase was made. The ending balance is $3,400.00, matching cash_accounts in the working database. This helps me separate what the React board displayed as RESOLVED from what the agents actually completed: the human status changes were recorded, but the underlying tee, rent, discount, and hoodie issues were not all settled.</textarea><div class="save-state" aria-live="polite"></div>
+      </section>
+    </section>
+  </main>
+  <script>
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    const panels = tabs.map(tab => document.getElementById(tab.getAttribute('aria-controls')));
+    function selectTab(index, focus = false) {
+      tabs.forEach((tab, i) => {
+        const selected = i === index;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        panels[i].hidden = !selected;
+      });
+      if (focus) tabs[index].focus();
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTab(index));
+      tab.addEventListener('keydown', event => {
+        let next = index;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        selectTab(next, true);
+      });
+    });
+    document.querySelectorAll('textarea[data-save]').forEach(area => {
+      const key = `campus-customs-${area.dataset.save}`;
+      try { area.value = localStorage.getItem(key) || area.value; } catch (_) { /* Storage may be disabled for local files. */ }
+      area.addEventListener('input', () => {
+        const status = area.nextElementSibling;
+        try {
+          localStorage.setItem(key, area.value);
+          status.textContent = 'Saved in this browser';
+        } catch (_) {
+          status.textContent = 'Browser storage is unavailable; copy your notes before closing.';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

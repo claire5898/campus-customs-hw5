@@ -1,0 +1,61 @@
+{
+  "source": {
+    "database": "data/campus_customs_new.db",
+    "shop_date": "2026-08-31",
+    "starting_checking_balance": 3400.0,
+    "ending_checking_balance": 3400.0,
+    "cash_change_total": 0.0,
+    "cash_reconciles": true,
+    "note": "All three tickets were marked resolved by a human for the assignment after agent review. Resolution was status-only: no payment, purchase, fulfillment, stock reservation, or outside contact occurred."
+  },
+  "tickets": [
+    {
+      "id": 101,
+      "final_status": "resolved",
+      "short_outcome": "No CC-TEE-WHITE size S was available (short 1). Vendor 1 was blocked by open, unpaid invoice 501 ($840, overdue on shop date 2026-08-31); its 5-day lead time was not guaranteed. The customer was not promised or contacted, and no payment or purchase was made.",
+      "agents": [
+        {"name": "Boss", "did": "Reviewed the ticket, delegated stock and vendor eligibility research to Inventory, and synthesized a cautious recommendation; did not pay or contact the customer."},
+        {"name": "Inventory", "did": "Checked exact SKU, size, quantity, vendor lead time, and shipping eligibility; delegated the invoice blocker lookup to Accounting."},
+        {"name": "Accounting", "did": "Checked invoice 501 and unpaid-invoice status; confirmed the $840 balance was overdue and blocking vendor shipment."},
+        {"name": "Facilities", "did": "Not involved; outside this ticket's scope."},
+        {"name": "Customer Service", "did": "A cautious customer update was drafted for review but not sent."}
+      ],
+      "human_approvals": [
+        {"type": "ticket_status_resolution", "approved_by": "Claire", "action": "Marked ticket resolved through the human-confirmed backend route after agent review.", "confirmation": "RESOLVE TICKET"}
+      ],
+      "financial_approvals": []
+    },
+    {
+      "id": 102,
+      "final_status": "resolved",
+      "short_outcome": "Facilities verified monthly rent of $2,400 is due 2026-09-02, two days after the shop date, so it was not yet overdue. Checking was $3,400. The prior rent-payment state was not verified; no payment or landlord contact occurred.",
+      "agents": [
+        {"name": "Boss", "did": "Reviewed the rent notice and delegated lease/due-date research to Facilities."},
+        {"name": "Inventory", "did": "Not involved; inventory was not needed for this rent ticket."},
+        {"name": "Accounting", "did": "Checked checking balance, unpaid invoices, and rent/payment records; reported the balance and the uncertainty around payment status without assuming future cash."},
+        {"name": "Facilities", "did": "Checked the lease and rent due date, then asked Accounting to verify cash and recorded payment information."},
+        {"name": "Customer Service", "did": "Not involved; no customer communication was needed."}
+      ],
+      "human_approvals": [
+        {"type": "ticket_status_resolution", "approved_by": "Claire", "action": "Marked ticket resolved through the human-confirmed backend route after agent review.", "confirmation": "RESOLVE TICKET"}
+      ],
+      "financial_approvals": []
+    },
+    {
+      "id": 103,
+      "final_status": "resolved",
+      "short_outcome": "Inventory found 8 of 20 requested CC-HOOD-NAVY size M (short 12). Accounting found no database-backed discount approval; $58 list price and $22 unit cost imply $1,160 at list for 20, arithmetic only—not an approved quote. Vendor shipment was blocked by invoice 501. No purchase or customer promise occurred.",
+      "agents": [
+        {"name": "Boss", "did": "Reviewed the bulk request, delegated stock availability to Inventory and pricing/discount review to Accounting, then synthesized the findings."},
+        {"name": "Inventory", "did": "Checked the exact hoodie SKU, size, requested quantity, and stock (8 available, 12 short); asked Accounting to verify pricing/discount facts."},
+        {"name": "Accounting", "did": "Checked pricing and discount authorization, calculated the $1,160 list-price total as arithmetic only, and verified the vendor/invoice shipping block."},
+        {"name": "Facilities", "did": "Not involved; facilities facts were unrelated to the bulk hoodie request."},
+        {"name": "Customer Service", "did": "Not involved; no customer message was finalized or sent."}
+      ],
+      "human_approvals": [
+        {"type": "ticket_status_resolution", "approved_by": "Claire", "action": "Marked ticket resolved through the human-confirmed backend route after agent review.", "confirmation": "RESOLVE TICKET"}
+      ],
+      "financial_approvals": []
+    }
+  ]
+}

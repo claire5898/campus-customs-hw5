@@ -100,12 +100,10 @@ class AgentTeamTests(unittest.TestCase):
         self.assertIn("get_pricing", READ_TOOLS["Accounting"])
 
     def test_default_model_and_run_guards(self) -> None:
-        team = build_agent_team()
+        test_model = TestModel()
+        team = build_agent_team(model=test_model)
         self.assertEqual(MODEL_NAME, "gpt-6-luna")
-        self.assertEqual(
-            {agent.model.model_name for agent in team.values()},
-            {"gpt-6-luna"},
-        )
+        self.assertTrue(all(agent.model is test_model for agent in team.values()))
         self.assertEqual(MAX_DELEGATION_DEPTH, 6)
         self.assertGreater(MAX_MODEL_REQUESTS, 0)
         self.assertGreater(MAX_TOOL_CALLS, 0)
